@@ -1,5 +1,7 @@
 {
     "jupyter.jupyterServerType": "local",
-    "python.terminal.activateEnvironment": true,
-    "git.ignoreLimitWarning": true
+    "python.terminal.activateEnvironment": false,
+    "git.ignoreLimitWarning": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }
