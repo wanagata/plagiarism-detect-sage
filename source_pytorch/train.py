@@ -73,7 +73,8 @@ def train(model, train_loader, epochs, criterion, optimizer, device):
         for batch in train_loader:
             # get data
             batch_x, batch_y = batch
-
+            batch_y.unsqueeze_(0)
+            
             batch_x = batch_x.to(device)
             batch_y = batch_y.to(device)
 
@@ -105,22 +106,24 @@ if __name__ == '__main__':
     # Do not need to change
     parser.add_argument('--output-data-dir', type=str, default=os.environ['SM_OUTPUT_DATA_DIR'])
     parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
-    parser.add_argument('--data-dir', type=str, default=os.environ['SM_CHANNEL_TRAIN'])
+    parser.add_argument('--data-dir', type=str, default=os.environ['SM_CHANNEL_TRAINING'])
     
     # Training Parameters, given
     parser.add_argument('--batch-size', type=int, default=10, metavar='N',
                         help='input batch size for training (default: 10)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
+    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
+                        help='learning rate (default: 0.001)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
     
     ## TODO: Add args for the three model parameters: input_features, hidden_dim, output_dim
     # Model Parameters
-    parser.add_argument('--input_dim', type=int, default=3, metavar='IN',
-                        help='number of input features to model (default: 3)')
-    parser.add_argument('--hidden_dim', type=int, default=10, metavar='H',
-                        help='hidden dim of model (default: 10)')
+    parser.add_argument('--input_dim', type=int, default=2, metavar='IN',
+                        help='number of input features to model (default: 2)')
+    parser.add_argument('--hidden_dim', metavar='H', nargs='*', default=[64, 64],
+                        help='size of hidden layers')
     parser.add_argument('--output_dim', type=int, default=1, metavar='OUT',
                         help='output dim of model (default: 1)')
     
@@ -155,7 +158,7 @@ if __name__ == '__main__':
     model_info_path = os.path.join(args.model_dir, 'model_info.pth')
     with open(model_info_path, 'wb') as f:
         model_info = {
-            'input_features': args.input_features,
+            'input_features': args.input_dim,
             'hidden_dim': args.hidden_dim,
             'output_dim': args.output_dim,
         }
